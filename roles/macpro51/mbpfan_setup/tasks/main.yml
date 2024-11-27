@@ -1,0 +1,31 @@
+- name: Install yay using pacman
+  pacman:
+    name: yay
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Install mbpfan using yay as non-root user
+  command: yay -S --noconfirm mbpfan
+
+- name: Backup existing mbpfan.conf
+  copy:
+    src: /etc/mbpfan.conf
+    dest: "/etc/mbpfan.conf.ansible_bk_mbpfan_setup_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+  become: yes
+
+- name: Deploy mbpfan configuration file
+  copy:
+    src: "files/mbpfan.conf"
+    dest: "/etc/mbpfan.conf"
+  notify:
+    - Restart mbpfan
+  become: yes
+
+- name: Start and enable mbpfan service
+  systemd:
+    name: "mbpfan"
+    state: started
+    enabled: yes
+  become: yes

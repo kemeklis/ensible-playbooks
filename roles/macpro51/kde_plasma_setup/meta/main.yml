@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Vytenis
+  description: "Configures KDE Plasma settings for optimal display and power management on MacPro51."
+  license: MIT
+  min_ansible_version: "2.9"
+dependencies: []

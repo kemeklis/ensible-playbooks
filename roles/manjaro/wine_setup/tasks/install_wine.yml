@@ -1,0 +1,8 @@
+---
+# Install Wine and related packages
+
+- name: Install Wine and related packages
+  pacman:
+    name: "{{ wine_packages }}"
+    state: present
+    update_cache: yes

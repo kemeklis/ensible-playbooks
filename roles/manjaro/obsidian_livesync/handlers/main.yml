@@ -1,0 +1,5 @@
+- name: Restart CouchDB
+  command: docker-compose restart
+  args:
+    chdir: "/home/{{ ansible_user }}/Docker/obsidian-livesync/"
+  become: yes

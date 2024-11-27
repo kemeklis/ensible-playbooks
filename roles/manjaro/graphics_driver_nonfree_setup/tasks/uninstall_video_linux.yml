@@ -1,0 +1,29 @@
+- name: Check if lib32-libva-mesa-driver is installed
+  command: pacman -Qs lib32-libva-mesa-driver
+  register: libva_mesa_installed
+  changed_when: false
+  failed_when: false
+  become: yes
+
+- name: Remove lib32-libva-mesa-driver if installed
+  pacman:
+    name: lib32-libva-mesa-driver
+    state: absent
+  when: libva_mesa_installed.stdout != ""
+  notify: Reboot System
+  become: yes
+
+- name: Check if video-linux driver is installed
+  command: mhwd -li | grep video-linux
+  register: video_linux_installed
+  changed_when: false
+  failed_when: false
+  become: yes
+
+- name: Remove video-linux driver if installed
+  command: mhwd -r pci video-linux
+  when: video_linux_installed.rc == 0
+  notify:
+    - Regenerate Initramfs
+    - Reboot System
+  become: yes

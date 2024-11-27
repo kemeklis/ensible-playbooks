@@ -1,0 +1,6 @@
+---
+- name: macOS Setup
+  hosts: macos
+  roles:
+    # - ../roles/common
+    - ../roles/macos

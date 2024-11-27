@@ -1,0 +1,23 @@
+- name: Debug SSH key path and remote user
+  delegate_to: localhost
+  debug:
+    msg:
+      - "SSH Key Path: {{ ssh_key_path }}"
+      - "Remote User: {{ remote_user }}"
+      - "Inventory Hostname: {{ inventory_hostname }}"
+
+- name: Check if SSH key exists on the local machine
+  delegate_to: localhost
+  stat:
+    path: "{{ ssh_key_path }}"
+  register: ssh_key
+
+- name: Fail if no SSH key exists on the local machine
+  fail:
+    msg: "No SSH key found at {{ ssh_key_path }}. Please generate one before running this playbook."
+  when: not ssh_key.stat.exists
+
+- name: Copy SSH key to the remote machine
+  delegate_to: localhost
+  command:
+    cmd: "ssh-copy-id -i {{ ssh_key_path }} {{ remote_user }}@{{ ansible_host }}"

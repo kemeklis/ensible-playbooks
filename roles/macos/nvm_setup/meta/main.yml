@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Vytenis
+  description: "Installs and configures Node Version Manager (NVM) with the latest Node.js version on macOS."
+  license: MIT
+  min_ansible_version: "2.9"
+dependencies: []

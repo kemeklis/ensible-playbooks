@@ -1,0 +1,5 @@
+---
+# Main tasks file for wine_setup role
+
+- include_tasks: install_wine.yml
+- include_tasks: setup_wine_prefix.yml

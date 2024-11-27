@@ -1,0 +1,7 @@
+---
+# Handlers for restarting vsftpd
+- name: Restart vsftpd
+  service:
+    name: vsftpd
+    state: restarted
+  become: yes

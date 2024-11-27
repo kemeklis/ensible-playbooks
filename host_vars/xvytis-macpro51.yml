@@ -1,0 +1,52 @@
+# Variables specific to Mac Pro 5.1 running Manjaro
+macpro51: true
+
+# Display Configuration Variables
+kde_plasma:
+  display_output: "DP-2"
+  display_mode: "7680x2160"
+  display_rate: "119.97"
+  display_display: ":0"
+
+# Media drive mounting configuration
+mount_drives:
+  media:
+    device: "/dev/sda1"
+    mount_point: "/mnt/Media"
+    key_file: "/root/.media_keyfile"
+    filesystem: "ext4"
+    crypttab_name: "crypt_media"
+  # data:
+  #   device: "/dev/sda1"
+  #   mount_point: "/mnt/Data"
+  #   filesystem: "ext4"
+
+# List of generic packages to be installed
+generic_packages:
+  - obsidian
+  - dbeaver
+  - blender
+  - freecad
+  - docker
+  - docker-compose
+  - ranger
+  - firefox
+  - thunderbird
+  - gimp
+  - ranger
+  - ncmpcpp
+  - brave-browser
+  - neovim
+  - tree
+  - xclip
+  - btop
+  - deluge-gtk
+
+# List of generic packages to be installed using yay
+yay_packages:
+  - github-desktop-bin
+  - insomnia-bin
+  - orca-slicer-bin
+  - clementine
+  - yt-dlp
+  - yt-dlp-gui

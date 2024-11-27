@@ -1,0 +1,13 @@
+---
+# defaults/main.yml
+
+# List of essential packages to install
+essential_packages:
+  - git
+  - htop
+  - nano
+  - fakeroot
+  - base-devel
+  - p7zip
+  - vim
+  # Add more packages as needed

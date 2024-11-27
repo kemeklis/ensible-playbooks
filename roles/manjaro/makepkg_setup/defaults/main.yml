@@ -1,0 +1,1 @@
+parallel_jobs: "{{ ansible_processor_vcpus | default(24) }}"

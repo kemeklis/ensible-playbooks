@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Vytenis
+  description: "Sets up MPD (Music Player Daemon) and configures access to music directory on Manjaro Linux."
+  license: MIT
+  min_ansible_version: "2.9"
+dependencies: []

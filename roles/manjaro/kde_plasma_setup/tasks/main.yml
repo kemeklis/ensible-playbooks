@@ -1,0 +1,132 @@
+# Task to find and merge the xauth file
+- name: Install dependencies
+  pacman:
+    name:
+      - xorg-xrandr
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Find temporary xauth file
+  become: true
+  shell: find /tmp -name 'xauth_*' -print -quit
+  register: xauth_file
+  changed_when: xauth_file.stdout != ''
+  become: yes
+
+- name: Debug the found xauth file
+  debug:
+    msg: "Found xauth file: {{ xauth_file.stdout }}"
+
+- name: Merge temporary xauth file into .Xauthority
+  shell: xauth merge {{ xauth_file.stdout }}
+  when: xauth_file.stdout != ''
+
+# Get screen resolution using xrandr
+- name: Get screen resolution
+  shell: |
+    export DISPLAY=:0
+    export XAUTHORITY=/home/{{ ansible_user }}/.Xauthority
+    xrandr -d {{ kde_plasma.display_display }} | grep '*' | awk '{print $1}'
+  register: resolution
+  environment:
+    XAUTHORITY: "/home/{{ ansible_user }}/.Xauthority"
+    DISPLAY: "{{ kde_plasma.display_display }}"
+
+- name: Parse screen width
+  set_fact:
+    panel_width: "{{ resolution.stdout.split('x')[0] | int }}"
+
+- name: Calculate half screen width in pixels
+  set_fact:
+    panel_width: "{{ (panel_width | int) // 3 }}"
+
+- name: Adjust taskbar panel to be half screen width, centered, and set width type to custom
+  shell: |
+    qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+    var panel = panelById(panelIds[0]);
+    if (panel) {
+        panel.lengthMode = "custom";
+        panel.minimumLength = {{ panel_width }};
+        panel.length = {{ panel_width }};
+        panel.location = "bottom";
+        panel.alignment = "center";
+        panel.height = 50;
+    } else {
+        print("Panel not found");
+    }
+    '
+  args:
+    executable: /bin/bash
+
+- name: Backup powerdevilrc
+  copy:
+    src: /home/{{ ansible_user }}/.config/powerdevilrc
+    dest: /home/{{ ansible_user }}/.config/powerdevilrc.ansible_bk_kde_plasma_setup_{{ ansible_date_time.iso8601_basic }}
+    remote_src: yes
+  ignore_errors: yes
+
+- name: Copy powerdevilrc file from files directory
+  copy:
+    src: ../files/powerdevilrc
+    dest: /home/{{ ansible_user }}/.config/powerdevilrc
+  notify: Restart PowerDevil
+
+- name: Backup powermanagementprofilesrc
+  copy:
+    src: /home/{{ ansible_user }}/.config/powermanagementprofilesrc
+    dest: /home/{{ ansible_user }}/.config/powermanagementprofilesrc.ansible_bk_kde_plasma_setup_{{ ansible_date_time.iso8601_basic }}
+    remote_src: yes
+  become: yes
+
+- name: Copy powermanagementprofilesrc file from files directory
+  copy:
+    src: ../files/powermanagementprofilesrc
+    dest: /home/{{ ansible_user }}/.config/powermanagementprofilesrc
+  notify: Restart PowerDevil
+
+- name: Backup kscreenlockerrc
+  copy:
+    src: /home/{{ ansible_user }}/.config/kscreenlockerrc
+    dest: /home/{{ ansible_user }}/.config/kscreenlockerrc.ansible_bk_kde_plasma_setup_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+  ignore_errors: yes
+
+- name: Copy kscreenlockerrc file from files directory
+  copy:
+    src: ../files/kscreenlockerrc
+    dest: /home/{{ ansible_user }}/.config/kscreenlockerrc
+  notify: Restart Plasma
+
+- name: Backup kdeglobals
+  copy:
+    src: /home/{{ ansible_user }}/.config/kdeglobals
+    dest: /home/{{ ansible_user }}/.config/kdeglobals.ansible_bk_kde_plasma_setup_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+
+- name: Copy kdeglobals file from files directory
+  copy:
+    src: ../files/kdeglobals
+    dest: /home/{{ ansible_user }}/.config/kdeglobals
+  notify: Restart Plasma
+
+# Task to apply dark theme in KDE Plasma
+- name: Apply dark theme in KDE Plasma
+  shell: |
+    export DISPLAY=:0
+    export XAUTHORITY=/home/{{ ansible_user }}/.Xauthority
+    lookandfeeltool --apply org.manjaro.breath-dark.desktop
+  environment:
+    XAUTHORITY: "/home/{{ ansible_user }}/.Xauthority"
+    DISPLAY: "{{ kde_plasma.display_display }}"
+
+# Task to set the display settings
+- name: Set display settings using xrandr
+  shell: |
+    export DISPLAY=:0
+    export XAUTHORITY=/home/{{ ansible_user }}/.Xauthority
+    xrandr --output {{ kde_plasma.display_output }} --mode {{ kde_plasma.display_mode }} --rate {{ kde_plasma.display_rate }} --brightness 1.0
+  environment:
+    XAUTHORITY: "/home/{{ ansible_user }}/.Xauthority"
+    DISPLAY: "{{ kde_plasma.display_display }}"
+  notify: Restart Plasma

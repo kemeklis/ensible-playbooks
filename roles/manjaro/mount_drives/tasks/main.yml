@@ -1,0 +1,98 @@
+- name: Install required packages
+  pacman:
+    name:
+      - cryptsetup
+      - expect
+      - python-pexpect
+    state: present
+    update_cache: yes
+  become: yes
+
+# Generate a key file only if specified and doesn't exist
+- name: Create key files for encrypted drives
+  when: item.value.key_file is defined and not (item.value.key_file is file)
+  loop: "{{ mount_drives | dict2items }}"
+  command: "dd if=/dev/urandom of={{ item.value.key_file }} bs=1024 count=4"
+  args:
+    creates: "{{ item.value.key_file }}"
+  become: yes
+
+# # Set permissions for key files if defined
+# - name: Set permissions for key files
+#   when: item.value.key_file is defined and (item.value.key_file is file)
+#   loop: "{{ mount_drives | dict2items }}"
+#   file:
+#     path: "{{ item.value.key_file }}"
+#     owner: root
+#     group: root
+#     mode: '0400'
+#   become: yes
+
+# # Prompt for LUKS passphrases if required
+# - name: Prompt for LUKS passphrases
+#   when: item.value.filesystem != "swap" and item.value.key_file is defined
+#   loop: "{{ mount_drives | dict2items }}"
+#   pause:
+#     prompt: "Please enter the LUKS passphrase for {{ item.value.device }}"
+#   register: luks_passphrase
+#   loop_control:
+#     label: "{{ item.key }}"
+
+# # Add key file to LUKS partitions if defined
+# - name: Add key file to LUKS partitions
+#   when: item.value.filesystem != "swap" and item.value.key_file is defined
+#   loop: "{{ mount_drives | dict2items }}"
+#   vars:
+#     luks_passphrase_result: "{{ luks_passphrase.results | selectattr('item.key', 'equalto', item.key) | first }}"
+#   expect:
+#     command: "cryptsetup luksAddKey {{ item.value.device }} {{ item.value.key_file }}"
+#     responses:
+#       'Enter any existing passphrase: ': "{{ luks_passphrase_result.user_input }}"
+#   become: yes
+
+# # Backup /etc/crypttab before modifying
+# - name: Backup crypttab
+#   copy:
+#     src: /etc/crypttab
+#     dest: /etc/crypttab.ansible_bk_mount_drives_{{ ansible_date_time.iso8601_basic }}
+#     remote_src: yes
+#   become: yes
+
+# # Update /etc/crypttab with the drive information
+# - name: Update crypttab for drives
+#   when: item.value.key_file is defined
+#   loop: "{{ mount_drives | dict2items }}"
+#   lineinfile:
+#     path: /etc/crypttab
+#     regexp: "^{{ item.value.crypttab_name }}"
+#     line: "{{ item.value.crypttab_name }} {{ item.value.device }} {{ item.value.key_file }} luks"
+#     create: yes
+#   become: yes
+#   notify: Rebuild Initramfs
+
+# # Backup /etc/fstab before modifying
+# - name: Backup fstab
+#   copy:
+#     src: /etc/fstab
+#     dest: /etc/fstab.ansible_bk_mount_drives_{{ ansible_date_time.iso8601_basic }}
+#     remote_src: yes
+#   become: yes
+
+# # Update /etc/fstab for all drives, handling encrypted and non-encrypted separately
+# - name: Update fstab for drives
+#   loop: "{{ mount_drives | dict2items }}"
+#   lineinfile:
+#     path: /etc/fstab
+#     regexp: "^{{ item.value.device if item.value.key_file is undefined else '/dev/mapper/' + item.value.crypttab_name }}"
+#     line: "{{ '/dev/mapper/' + item.value.crypttab_name if item.value.key_file is defined else item.value.device }} {{ item.value.mount_point }} {{ item.value.filesystem }} defaults 0 2"
+#     create: yes
+#   become: yes
+
+# # Create mount points for each drive
+# - name: Create mount points
+#   loop: "{{ mount_drives | dict2items }}"
+#   file:
+#     path: "{{ item.value.mount_point }}"
+#     state: directory
+#     mode: '0755'
+#   become: yes

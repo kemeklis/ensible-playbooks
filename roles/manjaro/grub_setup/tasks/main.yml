@@ -1,0 +1,82 @@
+---
+# Main tasks for configuring GRUB for a text-based boot
+
+- name: Backup existing GRUB configuration
+  copy:
+    src: /etc/default/grub
+    dest: "/etc/default/grub.bak_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+  notify:
+    - Regenerate GRUB Configuration
+  become: yes
+
+- name: Remove 'quiet' from GRUB_CMDLINE_LINUX_DEFAULT
+  replace:
+    path: /etc/default/grub
+    regexp: '\bquiet\b'
+    replace: ''
+  notify: Regenerate GRUB Configuration
+  become: yes
+
+- name: Remove 'splash' from GRUB_CMDLINE_LINUX_DEFAULT
+  replace:
+    path: /etc/default/grub
+    regexp: '\bsplash\b'
+    replace: ''
+  notify: Regenerate GRUB Configuration
+  become: yes
+
+- name: Ensure GRUB_TIMEOUT_STYLE is set to 'menu'
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_TIMEOUT_STYLE='
+    line: 'GRUB_TIMEOUT_STYLE=menu'
+    create: yes
+  notify: Regenerate GRUB Configuration
+  become: yes
+
+- name: Set GRUB_TIMEOUT to 5 seconds
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_TIMEOUT='
+    line: 'GRUB_TIMEOUT={{ grub_timeout }}'
+    backrefs: yes
+  notify: Regenerate GRUB Configuration
+  become: yes
+
+# Additional configurations for plain text mode
+- name: Set GRUB_TERMINAL to console (force text mode)
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_TERMINAL='
+    line: 'GRUB_TERMINAL=console'
+    create: yes
+  notify: Regenerate GRUB Configuration
+  become: yes
+
+- name: Set GRUB_GFXMODE to text
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_GFXMODE='
+    line: 'GRUB_GFXMODE=text'
+    create: yes
+  notify: Regenerate GRUB Configuration
+  become: yes
+
+- name: Disable GRUB theme
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_THEME='
+    line: '#GRUB_THEME=""'
+    create: yes
+  notify: Regenerate GRUB Configuration
+  become: yes
+
+- name: Disable background image
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_BACKGROUND='
+    line: '#GRUB_BACKGROUND=""'
+    create: yes
+  notify: Regenerate GRUB Configuration
+  become: yes

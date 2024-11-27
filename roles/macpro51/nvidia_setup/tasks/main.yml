@@ -1,0 +1,13 @@
+---
+# Main tasks file for nvidia_setup role
+
+- include_tasks: install_nvidia.yml
+- include_tasks: set_environment.yml
+- include_tasks: configure_mkinitcpio.yml
+- include_tasks: configure_grub.yml
+- include_tasks: regenerate_grub.yml
+- include_tasks: install_cudnn8_cuda11.yml
+
+# Ensure the system always restarts after driver installation
+- name: Trigger system reboot after NVIDIA setup
+  meta: flush_handlers

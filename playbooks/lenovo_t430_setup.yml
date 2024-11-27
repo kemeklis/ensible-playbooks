@@ -1,0 +1,18 @@
+---
+- name: Setup for Lenovo T430 laptop
+  hosts: xvytis-lenovo_t430
+  vars_files:
+    - ../group_vars/all.yml
+    - ../group_vars/vault.yml
+    - ../group_vars/manjaro.yml
+    - ../host_vars/xvytis-lenovo_t430.yml
+  roles:
+    # -  ../roles/common/ssh_key_upload
+    # -  ../roles/manjaro/update_install_essentials
+    # -  ../roles/manjaro/grub_setup
+    # -  ../roles/manjaro/makepkg_setup
+    # -  ../roles/manjaro/pyenv_setup
+    # -  ../roles/manjaro/nvm_setup
+    # -  ../roles/manjaro/pacman_packages
+    # -  ../roles/manjaro/yay_packages
+    # -  ../roles/manjaro/vscodium_setup

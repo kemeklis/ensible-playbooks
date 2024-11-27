@@ -1,0 +1,5 @@
+---
+# Default variables for grub_screen_setup role
+
+# GRUB configuration settings
+grub_timeout: 5

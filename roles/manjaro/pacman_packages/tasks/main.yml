@@ -1,0 +1,9 @@
+---
+# Install generic packages via pacman
+
+- name: Install generic packages via pacman
+  pacman:
+    name: "{{ generic_packages }}"
+    state: present
+    update_cache: yes
+  become: yes

@@ -1,0 +1,6 @@
+---
+- name: Restart mbpfan
+  systemd:
+    name: mbpfan
+    state: restarted
+  become: yes

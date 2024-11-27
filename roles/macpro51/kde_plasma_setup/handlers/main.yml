@@ -1,0 +1,21 @@
+---
+# Handlers for kde_plasma_setup role
+
+- name: Restart KWin (run as user)
+  command: qdbus6 org.kde.KWin /KWin reconfigure
+  environment:
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ ansible_user_id }}/bus"
+
+- name: Reparse Power Management Configuration (run as user)
+  command: qdbus6 org.kde.Solid.PowerManagement /org/kde/Solid/PowerManagement reparseConfiguration
+  environment:
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ ansible_user_id }}/bus"
+
+- name: Reparse Power Management Configuration
+  command: qdbus6 org.kde.Solid.PowerManagement /org/kde/Solid/PowerManagement reparseConfiguration
+
+- name: Restart Plasma
+  command: systemctl restart --user plasma-plasmashell
+
+- name: Restart PowerDevil
+  command: systemctl --user restart plasma-powerdevil.service

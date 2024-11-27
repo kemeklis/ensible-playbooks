@@ -1,0 +1,21 @@
+---
+# Default variables for kvm_setup role
+
+# List of packages required for KVM and Virt-Manager
+kvm_packages:
+  - qemu-full
+  - libvirt
+  - virt-manager
+  - virt-viewer
+  - bridge-utils
+  - dnsmasq
+  - ebtables
+
+# List of users to add to the libvirt group
+libvirt_users:
+  - "{{ ansible_user }}"
+
+# Optionally, set to true to enable and start libvirtd service
+enable_libvirtd: true
+
+backup_libvirtd_conf: true

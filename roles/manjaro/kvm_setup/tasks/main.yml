@@ -1,0 +1,98 @@
+---
+# roles/kvm_setup/tasks/install_kvm.yml
+
+- name: Ensure pacman is up to date
+  pacman:
+    update_cache: yes
+    upgrade: yes
+  become: yes
+
+- name: Install KVM and Virt-Manager packages
+  pacman:
+    name:
+      - qemu-full
+      - virt-manager
+      - virt-viewer
+      - dnsmasq
+      - vde2
+      - bridge-utils
+      - openbsd-netcat
+      - ebtables
+    state: present
+    update_cache: yes
+    force: yes
+  notify:
+    - Regenerate Initramfs
+    - Reboot System
+  become: yes
+
+- name: Enable and start libvirtd service
+  systemd:
+    name: libvirtd.service
+    enabled: yes
+    state: started
+    daemon_reload: yes
+  become: yes
+
+- name: Backup existing libvirtd.conf
+  copy:
+    src: /etc/libvirt/libvirtd.conf
+    dest: "/etc/libvirt/libvirtd.conf.ansible_bk_kvm_setup_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+  become: yes
+
+- name: Configure libvirtd.conf for socket permissions
+  block:
+    - name: Set unix_sock_group to "libvirt"
+      lineinfile:
+        path: /etc/libvirt/libvirtd.conf
+        regexp: '^unix_sock_group\s*='
+        line: 'unix_sock_group = "libvirt"'
+        state: present
+        backup: yes
+
+    - name: Set unix_sock_rw_perms to "0770"
+      lineinfile:
+        path: /etc/libvirt/libvirtd.conf
+        regexp: '^unix_sock_rw_perms\s*='
+        line: 'unix_sock_rw_perms = "0770"'
+        state: present
+        backup: yes
+  notify: Regenerate Initramfs
+  become: yes
+
+- name: Add current user to libvirt group
+  user:
+    name: "{{ ansible_user }}"
+    groups: libvirt
+    append: yes
+  become: yes
+
+- name: Enable Nested Virtualization for Intel CPUs
+  when:
+    - "'Intel' in ansible_facts.processor[0]"
+  block:
+    - name: Create kvm-intel.conf with nested virtualization
+      copy:
+        dest: /etc/modprobe.d/kvm-intel.conf
+        content: "options kvm-intel nested=1"
+
+    - name: Reload kvm_intel module to apply nested virtualization
+      command: |
+        modprobe -r kvm_intel || true
+        modprobe kvm_intel
+      ignore_errors: yes
+  notify:
+    - Regenerate Initramfs
+    - Reboot System
+  become: yes
+
+- name: Reload kvm_amd module to apply nested virtualization
+  command: |
+    modprobe -r kvm_amd || true
+    modprobe kvm_amd
+  ignore_errors: yes
+  notify:
+    - Regenerate Initramfs
+    - Reboot System
+  become: yes

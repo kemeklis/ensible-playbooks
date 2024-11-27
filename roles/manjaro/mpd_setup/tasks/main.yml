@@ -1,0 +1,34 @@
+---
+# Main tasks for MPD setup
+
+- name: Install MPD and dependencies
+  pacman:
+    name:
+      - mpd
+      - mpc  # Optional: mpc is a command-line client for MPD
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Copy MPD configuration file
+  template:
+    src: files/mpd.conf.j2
+    dest: /etc/mpd.conf
+  become: yes
+  notify: Restart MPD
+
+- name: Ensure MPD music directory permissions are set
+  file:
+    path: /mnt/Media/Music
+    owner: mpd
+    group: audio
+    recurse: yes
+    mode: '0755'
+  become: yes
+
+- name: Start and enable MPD service
+  systemd:
+    name: mpd
+    enabled: yes
+    state: started
+  become: yes

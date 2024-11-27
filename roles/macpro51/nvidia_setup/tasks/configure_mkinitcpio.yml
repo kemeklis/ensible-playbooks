@@ -1,0 +1,26 @@
+- name: Backup existing mkinitcpio.conf
+  copy:
+    src: /etc/mkinitcpio.conf
+    dest: "/etc/mkinitcpio.conf.ansible_bk_nvidia_setup_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+  become: yes
+
+- name: Append NVIDIA modules to MODULES in mkinitcpio.conf
+  lineinfile:
+    path: /etc/mkinitcpio.conf
+    regexp: '^MODULES=\(([^)]*)\)'
+    line: 'MODULES=(\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)'
+    backrefs: yes
+  notify:
+    - Regenerate Initramfs
+  become: yes
+
+- name: Ensure 'encrypt' hook is present in HOOKS
+  lineinfile:
+    path: /etc/mkinitcpio.conf
+    regexp: '^HOOKS=\(([^)]*)\)'
+    line: 'HOOKS=(\1 encrypt)'
+    backrefs: yes
+  notify:
+    - Regenerate Initramfs
+  become: yes

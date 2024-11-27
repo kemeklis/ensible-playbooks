@@ -1,0 +1,8 @@
+---
+# Handlers for code_setup role
+
+- name: Restart vscodium
+  systemd:
+    name: vscodium
+    state: restarted
+  when: ansible_os_family == "Archlinux"

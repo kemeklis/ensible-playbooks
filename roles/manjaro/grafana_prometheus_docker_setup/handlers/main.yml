@@ -1,0 +1,9 @@
+---
+# Handlers for Grafana and Prometheus setup
+
+- name: Restart Docker Compose Services
+  shell: |
+    cd /home/{{ ansible_user }}/Docker/grafana-prometheus && docker-compose down && docker-compose up -d
+  args:
+    executable: /bin/bash
+  become: yes

@@ -1,0 +1,5 @@
+# Common variables for all systems
+timezone: "Europe/Vilnius"
+
+ssh_key_path: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519.pub"
+remote_user: "{{ ansible_user }}"

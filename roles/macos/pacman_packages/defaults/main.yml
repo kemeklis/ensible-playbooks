@@ -1,0 +1,16 @@
+# List of generic packages to be installed on all systems
+generic_packages:
+  - obsidian
+  - dbeaver
+  - blender
+  - freecad
+  - docker
+  - docker-compose
+  - ranger
+  - firefox
+  - thunderbird
+  - gimp
+  - ranger
+  - ncmpcpp
+  - brave
+  - neovim

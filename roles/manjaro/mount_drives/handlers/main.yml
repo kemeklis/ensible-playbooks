@@ -1,0 +1,3 @@
+- name: Rebuild Initramfs
+  command: "mkinitcpio -P"
+  become: yes

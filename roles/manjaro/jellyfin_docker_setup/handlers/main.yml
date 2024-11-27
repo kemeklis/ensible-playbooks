@@ -1,0 +1,8 @@
+---
+# Handlers for Docker actions
+
+- name: Restart Docker
+  systemd:
+    name: docker
+    state: restarted
+  become: yes

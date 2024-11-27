@@ -1,0 +1,8 @@
+---
+# Handlers for restarting Docker Compose services
+
+- name: Restart Docker Compose
+  shell: docker-compose restart
+  args:
+    chdir: /home/{{ ansible_user }}/Docker/photoprism
+  become: yes

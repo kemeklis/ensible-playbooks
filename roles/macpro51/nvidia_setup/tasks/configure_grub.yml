@@ -1,0 +1,16 @@
+- name: Backup existing GRUB configuration
+  copy:
+    src: /etc/default/grub
+    dest: "/etc/default/grub.ansible_bk_nvidia_setup_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+  become: yes
+
+- name: Append NVIDIA kernel parameters to GRUB_CMDLINE_LINUX_DEFAULT
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX_DEFAULT="([^"]*)"'
+    line: 'GRUB_CMDLINE_LINUX_DEFAULT="\1 loglevel=3 nomodeset nvidia-drm.modeset=1 nvidia_drm.fbdev=1 nvidia.NVreg_EnableGpuFirmware=0"'
+    backrefs: yes
+  notify:
+    - Regenerate GRUB Configuration
+  become: yes

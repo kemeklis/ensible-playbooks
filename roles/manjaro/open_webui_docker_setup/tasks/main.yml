@@ -1,0 +1,50 @@
+---
+# Main tasks for installing and setting up Open WebUI
+
+- name: Install Docker
+  pacman:
+    name: docker
+    state: present
+    update_cache: true
+  become: yes
+
+- name: Start and enable Docker service
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Install Nvidia container toolkit
+  pacman:
+    name: nvidia-container-toolkit
+    state: present
+    update_cache: true
+  become: yes
+
+- name: Create directory for Open WebUI
+  file:
+    path: "/home/{{ ansible_user }}/Docker/open-webui"
+    state: directory
+    mode: '0755'
+
+- name: Copy Docker Compose file for Open WebUI
+  copy:
+    src: "files/docker-compose-open-webui.yml"
+    dest: "/home/{{ ansible_user }}/Docker/open-webui/docker-compose.yml"
+    mode: '0644'
+
+- name: Run Open WebUI Docker container
+  shell: |
+    docker run -d \
+    --gpus=all \
+    -p 3000:8080 \
+    --add-host=host.docker.internal:host-gateway \
+    -v open-webui:/app/backend/data \
+    --name open-webui \
+    --restart always \
+    ghcr.io/open-webui/open-webui:cuda
+  args:
+    executable: /bin/bash
+  become: yes
+  notify: Restart Docker

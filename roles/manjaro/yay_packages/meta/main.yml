@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Vytenis
+  description: "Installs AUR packages using yay on Manjaro Linux, including CUDA and GPU utilities."
+  license: MIT
+  min_ansible_version: "2.9"
+dependencies: []

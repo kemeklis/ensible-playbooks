@@ -1,0 +1,23 @@
+---
+# tasks/main.yml
+- name: Install pyenv dependencies
+  brew:
+    name:
+      - readline
+      - xz
+      - zlib
+  become: yes
+
+- name: Install pyenv using Homebrew
+  brew:
+    name: pyenv
+    state: present
+  become: yes
+
+- name: Install latest Python version using pyenv
+  shell: 'eval "$(pyenv init -)" && pyenv install {{ latest_python_version }} && pyenv global {{ latest_python_version }}'
+  args:
+    creates: "/Users/{{ ansible_user }}/.pyenv/versions/{{ latest_python_version }}"
+  become: no
+  vars:
+    latest_python_version: "3.10.7"  # Adjust as needed

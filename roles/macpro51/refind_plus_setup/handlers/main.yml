@@ -1,0 +1,19 @@
+# roles/refind_plus_setup/handlers/main.yml
+
+- name: Update EFI Boot Entries
+  command: |
+    efibootmgr --create --disk /dev/sda --part 1 --loader "{{ refindplus.efi_target }}" --label "RefindPlus" --verbose
+  args:
+    creates: "{{ refindplus.efi_target }}"
+  become: yes
+  when: ansible_facts['distribution'] == 'ManjaroLinux'
+
+- name: Reboot System
+  reboot:
+    msg: "Reboot initiated by Ansible for RefindPlus installation."
+    connect_timeout: 5
+    reboot_timeout: 600
+    pre_reboot_delay: 0
+    post_reboot_delay: 60
+    test_command: whoami
+  become: yes

@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Vytenis
+  description: "Uploads SSH keys to remote systems for passwordless authentication."
+  license: MIT
+  min_ansible_version: "2.9"
+dependencies: []

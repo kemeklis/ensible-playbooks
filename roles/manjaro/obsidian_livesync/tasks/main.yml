@@ -1,0 +1,57 @@
+- name: Ensure Docker is installed
+  package:
+    name: docker
+    state: present
+  become: yes
+
+- name: Ensure Docker Compose is installed
+  package:
+    name: docker-compose
+    state: present
+  become: yes
+
+- name: Create directory for CouchDB Docker Compose
+  file:
+    path: "/home/{{ ansible_user }}/Docker/obsidian-livesync"
+    state: directory
+
+- name: Copy docker-compose.yml for CouchDB
+  copy:
+    src: docker-compose.yml
+    dest: "/home/{{ ansible_user }}/Docker/obsidian-livesync/docker-compose.yml"
+
+- name: Run Docker Compose with environment variables for CouchDB
+  shell: |
+    export COUCHDB_USER={{ COUCHDB_USER }}
+    export COUCHDB_PASSWORD={{ COUCHDB_PASSWORD }}
+    docker-compose up -d
+  args:
+    chdir: "/home/{{ ansible_user }}/Docker/obsidian-livesync/"
+  become: yes
+  notify: Restart CouchDB
+
+- name: Wait for CouchDB to be available
+  uri:
+    url: "http://localhost:5984/_up"
+    method: GET
+    status_code: 200
+  register: couchdb_status
+  retries: 10
+  delay: 10
+
+- name: Verify CouchDB admin credentials
+  shell: |
+    curl -s -o /dev/null -w "%{http_code}" -u {{ COUCHDB_USER }}:{{ COUCHDB_PASSWORD }} http://localhost:5984/_session
+  register: auth_check
+  retries: 5
+  delay: 5
+  ignore_errors: true
+  changed_when: false
+
+- name: Ensure 'obsidian-livesync' database exists (with curl)
+  shell: |
+    curl -X PUT -u {{ COUCHDB_USER }}:{{ COUCHDB_PASSWORD }} http://localhost:5984/obsidian-livesync
+  when: auth_check.stdout == "200"
+  retries: 5
+  delay: 5
+  changed_when: true

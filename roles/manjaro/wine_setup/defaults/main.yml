@@ -1,0 +1,17 @@
+---
+# Default variables for wine_setup role
+
+# List of Wine-related packages to install
+wine_packages:
+  - wine
+  - wine-mono
+  - wine_gecko
+  - winetricks
+
+# Path for the 64-bit Wine prefix
+wine_prefix_path: "/home/{{ ansible_user }}/.wine64"
+
+# Environment variables for Wine
+wine_environment:
+  WINEPREFIX: "{{ wine_prefix_path }}"
+  WINEARCH: "win64"

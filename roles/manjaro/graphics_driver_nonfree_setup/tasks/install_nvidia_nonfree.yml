@@ -1,0 +1,6 @@
+- name: Install NVIDIA (non-free) driver using mhwd
+  command: mhwd -a pci nonfree 0300
+  notify:
+    - Regenerate Initramfs
+    - Reboot System
+  become: yes

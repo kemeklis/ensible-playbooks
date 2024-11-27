@@ -1,0 +1,44 @@
+---
+- name: Install yay
+  pacman:
+    name: yay
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Install vscodium-bin and vscodium-bin-marketplace AUR packages
+  command: yay -S --noconfirm vscodium-bin vscodium-bin-marketplace
+
+- name: Install VS Code extensions
+  command: vscodium --install-extension {{ item }} --force
+  loop: "{{ vscode_extensions }}"
+  register: install_results
+  ignore_errors: yes
+
+- name: List all failed extensions
+  debug:
+    msg: "The following extensions failed to install: {{ install_results.results | selectattr('rc', '!=', 0) | map(attribute='item') | list }}"
+  when: install_results is defined and install_results.results | selectattr('rc', '!=', 0) | list | length > 0
+
+- name: Set VSCodium as default for JavaScript (.js) files
+  command: |
+    xdg-mime default vscodium.desktop application/javascript
+
+- name: Set VSCodium as default for TypeScript (.ts) files
+  command: |
+    xdg-mime default vscodium.desktop text/typescript
+
+- name: Set VSCodium as default for Python (.py) files
+  command: |
+    xdg-mime default vscodium.desktop text/x-python
+
+- name: Set VSCodium as default for JSON (.json) files
+  command: |
+    xdg-mime default vscodium.desktop application/json
+
+- name: Set VSCodium as default for other common file types
+  command: |
+    xdg-mime default vscodium.desktop text/plain
+
+- name: Refresh KDE Plasma file associations
+  command: kbuildsycoca5 --noincremental

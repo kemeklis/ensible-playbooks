@@ -1,0 +1,2 @@
+- name: Install cudnn8-cuda11.1 package
+  command: "yay -S --noconfirm cudnn8-cuda11.1"

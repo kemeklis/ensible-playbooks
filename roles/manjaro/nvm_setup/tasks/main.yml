@@ -1,0 +1,39 @@
+---
+# Main tasks for nvm_setup role
+
+- name: Install dependencies for NVM
+  pacman:
+    name:
+      - curl
+      - wget
+      - git
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Download and install NVM
+  shell: |
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+  args:
+    creates: "/home/{{ ansible_user }}//.nvm"
+
+- name: Ensure NVM installation exists
+  stat:
+    path: "/home/{{ ansible_user }}/.nvm/nvm.sh"
+  register: nvm_installed
+
+- name: Fail if NVM is not installed
+  fail:
+    msg: "NVM installation failed. nvm.sh is missing."
+  when: not nvm_installed.stat.exists
+
+- name: Initialize NVM for the current session and install the latest Node.js
+  shell: |
+    export NVM_DIR="$HOME/.nvm"
+    source $NVM_DIR/nvm.sh
+    nvm install node
+    nvm use node
+    nvm alias default node
+  args:
+    executable: /bin/zsh
+  when: nvm_installed.stat.exists

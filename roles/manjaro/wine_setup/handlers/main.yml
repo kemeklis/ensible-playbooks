@@ -1,0 +1,6 @@
+---
+# Handlers for wine_setup role
+
+- name: Notify user to restart shell
+  debug:
+    msg: "Please restart your shell or source your .zshrc to apply Wine environment variables."

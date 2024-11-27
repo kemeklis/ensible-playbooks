@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Vytenis
+  description: "Installs Wine and configures a 64-bit Wine prefix on Manjaro Linux for Windows compatibility."
+  license: MIT
+  min_ansible_version: "2.9"
+dependencies: []

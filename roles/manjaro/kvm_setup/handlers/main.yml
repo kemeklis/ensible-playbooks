@@ -1,0 +1,19 @@
+# roles/kvm_setup/handlers/main.yml
+
+- name: Regenerate Initramfs
+  command: mkinitcpio -P
+  become: yes
+
+- name: Regenerate GRUB Configuration
+  command: grub-mkconfig -o /boot/grub/grub.cfg
+  become: yes
+
+- name: Reboot System
+  reboot:
+    msg: "Reboot initiated by Ansible for KVM setup."
+    connect_timeout: 5
+    reboot_timeout: 600
+    pre_reboot_delay: 0
+    post_reboot_delay: 60
+    test_command: whoami
+  become: yes

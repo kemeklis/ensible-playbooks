@@ -1,0 +1,104 @@
+- name: Install Docker
+  pacman:
+    name: docker
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Install Docker Compose
+  pacman:
+    name: docker-compose
+    state: present
+  become: yes
+
+- name: Enable and start Docker service
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Create directory for Docker and Grafana-Prometheus
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0777
+  loop:
+    - /home/{{ ansible_user }}/Docker
+    - /home/{{ ansible_user }}/Docker/grafana-prometheus
+    - /home/{{ ansible_user }}/Docker/grafana-prometheus/prometheus
+    - /home/{{ ansible_user }}/Docker/grafana-prometheus/prometheus-data
+    - /home/{{ ansible_user }}/Docker/grafana-prometheus/alertmanager
+    - /home/{{ ansible_user }}/Docker/grafana-prometheus/grafana
+    - /home/{{ ansible_user }}/Docker/grafana-prometheus/grafana/dashboards
+
+- name: Copy docker-compose.yml
+  copy:
+    src: files/docker-compose.yml
+    dest: /home/{{ ansible_user }}/Docker/grafana-prometheus/docker-compose.yml
+
+- name: Copy Prometheus configuration
+  copy:
+    src: files/prometheus/prometheus.yml
+    dest: /home/{{ ansible_user }}/Docker/grafana-prometheus/prometheus/prometheus.yml
+
+- name: Copy Alertmanager configuration
+  copy:
+    src: files/alertmanager/config.yml
+    dest: /home/{{ ansible_user }}/Docker/grafana-prometheus/alertmanager/config.yml
+
+- name: Run Docker Compose to start services
+  shell: |
+    cd /home/{{ ansible_user }}/Docker/grafana-prometheus && docker-compose up -d
+  args:
+    executable: /bin/bash
+  notify: Restart Docker Compose Services
+  become: yes
+
+- name: Wait for Grafana to start
+  wait_for:
+    host: localhost
+    port: 3000
+    delay: 10
+    timeout: 300
+
+- name: Encode Grafana credentials
+  set_fact:
+    grafana_auth: "{{ 'admin:admin' | b64encode }}"
+
+- name: Configure Prometheus as Grafana datasource
+  uri:
+    url: "http://localhost:3000/api/datasources"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Basic {{ grafana_auth }}"
+    body: |
+      {
+        "name": "Prometheus",
+        "type": "prometheus",
+        "url": "http://localhost:9090",
+        "access": "proxy",
+        "isDefault": true
+      }
+    status_code: 200
+    validate_certs: no
+
+- name: Load Grafana dashboards
+  uri:
+    url: "http://localhost:3000/api/dashboards/db"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Basic {{ grafana_auth }}"
+    body_format: json
+    body: >
+      {
+        "dashboard": {{ lookup('file', item) | from_json }},
+        "folderId": 0,
+        "overwrite": true
+      }
+    status_code: 200
+    validate_certs: no
+  with_fileglob:
+    - "files/grafana_dashboards/*.json"

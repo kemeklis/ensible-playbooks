@@ -1,0 +1,23 @@
+---
+# Main tasks for installing and configuring vsftpd
+
+- name: Install vsftpd package
+  pacman:
+    name: vsftpd
+    state: present
+    update_cache: true
+  become: yes
+
+- name: Backup vsftpd.conf
+  copy:
+    src: /etc/vsftpd.conf
+    dest: "/etc/vsftpd.conf.ansible_bk_vsftpd_setup_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+  become: yes
+
+- name: Copy vsftpd.conf from files directory to /etc/vsftpd.conf
+  copy:
+    src: files/vsftpd.conf
+    dest: /etc/vsftpd.conf
+  become: yes
+  notify: Restart vsftpd

@@ -1,0 +1,15 @@
+---
+# tasks/main.yml
+
+- name: Update pacman package database and upgrade system
+  pacman:
+    update_cache: yes
+    upgrade: yes
+  become: yes
+
+- name: Install essential packages
+  pacman:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ essential_packages }}"
+  become: yes

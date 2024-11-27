@@ -1,0 +1,133 @@
+- name: Install required packages
+  pacman:
+    name:
+      - unzip
+      - wget
+      - efibootmgr
+      - refind
+    state: present
+    update_cache: yes
+  become: yes
+
+# Step 1: Install rEFInd using the refind-install script
+- name: Run rEFInd install script
+  command: refind-install
+  register: refind_install_output
+  become: yes
+  changed_when: "'already installed' not in refind_install_output.stdout"
+  ignore_errors: yes
+
+# Step 2: Verify if rEFInd installation was successful
+- name: Check if rEFInd binary is installed
+  stat:
+    path: "/boot/efi/EFI/refind/refind_x64.efi"
+  register: refind_efi_stat
+  become: yes
+
+- name: Fail if rEFInd installation failed
+  fail:
+    msg: "rEFInd installation failed."
+  when: not refind_efi_stat.stat.exists
+
+# Step 3: Ensure backup directory exists
+- name: Ensure backup directory exists
+  file:
+    path: "/boot/efi/EFI/refind/backup_refind"
+    state: directory
+  become: yes
+
+- name: Backup refind_x64.efi
+  copy:
+    src: "/boot/efi/EFI/refind/refind_x64.efi"
+    dest: "/boot/efi/EFI/refind/backup_refind/refind_x64.efi.ansible_bk_refind_plus_setup_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+  become: yes
+  when: refind_efi_stat.stat.exists
+  ignore_errors: yes
+
+# Step 4: Download and Install RefindPlus
+- name: Create extraction directory
+  file:
+    path: "/tmp/refindplus_extract"
+    state: directory
+  become: yes
+
+- name: Download RefindPlus
+  get_url:
+    url: "{{ refindplus.download_url }}"
+    dest: "/tmp/x64-RefindPlus.zip"
+  register: download_refindplus_no_checksum
+  become: yes
+
+- name: Unarchive RefindPlus
+  unarchive:
+    src: "/tmp/x64-RefindPlus.zip"
+    dest: "/tmp/refindplus_extract"
+    remote_src: yes
+  when: download_refindplus_no_checksum is changed
+  become: yes
+
+- name: Install RefindPlus EFI binary
+  copy:
+    src: "/tmp/refindplus_extract/x64_RefindPlus_REL.efi"
+    dest: "/boot/efi/EFI/refind/refind_x64.efi"
+  notify:
+    - Update EFI Boot Entries
+    - Reboot System
+  become: yes
+  when: '"/tmp/refindplus_extract/x64_RefindPlus_REL.efi" is file'
+
+# Configuration and Cleanup
+- name: Backup config.conf
+  copy:
+    src: "/boot/efi/EFI/refind/config.conf"
+    dest: "/boot/efi/EFI/refind/config.conf.ansible_bk_refind_plus_setup_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+  become: yes
+  ignore_errors: yes
+
+- name: Copy config.conf to EFI directory
+  copy:
+    src: "files/config.conf"
+    dest: "/boot/efi/EFI/refind/config.conf"
+  become: yes
+
+- name: Backup refind.conf
+  copy:
+    src: "/boot/efi/EFI/refind/refind.conf"
+    dest: "/boot/efi/EFI/refind/refind.conf.ansible_bk_refind_plus_setup_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+  become: yes
+  ignore_errors: yes
+
+- name: Copy refind.conf to EFI directory
+  copy:
+    src: "files/refind.conf"
+    dest: "/boot/efi/EFI/refind/refind.conf"
+  become: yes
+
+- name: Cleanup RefindPlus zip file
+  file:
+    path: "/tmp/x64-RefindPlus_001401-AA.zip"
+    state: absent
+  when: download_refindplus_no_checksum is changed
+  become: yes
+
+- name: Cleanup extraction directory
+  file:
+    path: "/tmp/refindplus_extract"
+    state: absent
+  when: download_refindplus_no_checksum is changed
+  become: yes
+
+# Verifying the installation
+- name: Ensure RefindPlus EFI binary is present
+  stat:
+    path: "/boot/efi/EFI/refind/refind_x64.efi"
+  register: refindplus_efi
+  become: yes
+
+- name: Verify RefindPlus installation
+  debug:
+    msg: "RefindPlus has been successfully installed at /boot/efi/EFI/refind/refind_x64.efi"
+  when: refindplus_efi.stat.exists

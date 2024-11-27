@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Vytenis
+  description: "Sets up automatic mounting for encrypted and unencrypted drives on Manjaro Linux."
+  license: MIT
+  min_ansible_version: "2.9"
+dependencies: []

@@ -1,0 +1,9 @@
+---
+# tasks/main.yml
+- name: Install NVM
+  shell: 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash'
+  args:
+    creates: "/Users/{{ ansible_user }}/.nvm/nvm.sh"
+
+- name: Load NVM and install latest Node.js
+  shell: 'source /Users/{{ ansible_user }}/.nvm/nvm.sh && nvm install node'

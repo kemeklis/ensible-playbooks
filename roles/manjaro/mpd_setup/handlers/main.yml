@@ -1,0 +1,8 @@
+---
+# Handlers for MPD configuration
+
+- name: Restart MPD
+  systemd:
+    name: mpd
+    state: restarted
+  become: yes

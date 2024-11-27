@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Vytenis
+  description: "Installs generic packages on macOS using pacman."
+  license: MIT
+  min_ansible_version: "2.9"
+dependencies: []

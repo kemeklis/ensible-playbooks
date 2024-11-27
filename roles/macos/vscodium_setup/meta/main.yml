@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Vytenis
+  description: "Installs VSCodium, a community-driven VS Code, along with preferred extensions on macOS."
+  license: MIT
+  min_ansible_version: "2.9"
+dependencies: []

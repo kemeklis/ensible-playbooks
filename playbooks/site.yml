@@ -1,0 +1,11 @@
+- import_playbook: macpro51_setup.yml
+  when: "'xvytis-macpro51' in inventory_hostname"
+
+- import_playbook: lenovo_t430_setup.yml
+  when: "'xvytis-lenovo_t430' in inventory_hostname"
+
+# - import_playbook: manjaro_setup.yml
+#   when: "'manjaro' in group_names"
+
+# - import_playbook: macos_setup.yml
+#   when: "'macos' in group_names"

@@ -1,0 +1,86 @@
+- name: Install dependencies and pyenv
+  pacman:
+    name:
+      - git
+      - base-devel
+      - openssl
+      - zlib
+      - bzip2
+      - readline
+      - sqlite
+      - libffi
+      - tk
+      - pyenv
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Set PYENV_ROOT environment variable in .zshrc
+  lineinfile:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    line: 'export PYENV_ROOT="{{ pyenv_root }}"'
+    create: yes
+    state: present
+    insertafter: EOF
+
+- name: Add pyenv bin to PATH in .zshrc
+  lineinfile:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    line: 'export PATH="$PYENV_ROOT/bin:$PATH"'
+    create: yes
+    state: present
+    insertafter: EOF
+
+- name: Initialize pyenv in shell (.zshrc)
+  lineinfile:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    line: 'eval "$(pyenv init --path)"'
+    create: yes
+    state: present
+    insertafter: EOF
+
+- name: Add pyenv virtualenv to shell (.zshrc)
+  lineinfile:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    line: 'eval "$(pyenv init -)"'
+    create: yes
+    state: present
+    insertafter: EOF
+
+- name: Reload shell for pyenv
+  shell: source /home/{{ ansible_user }}/.zshrc
+  args:
+    executable: /bin/zsh
+
+- name: Install latest Python version using pyenv
+  shell: |
+    latest_python=$(pyenv install --list | grep -E "^\s*[0-9]+\.[0-9]+\.[0-9]+$" | tr -d ' ' | tail -1)
+    timeout 1800 pyenv install -f --skip-existing "$latest_python"
+    pyenv global "$latest_python"
+  environment:
+    PYENV_ROOT: "{{ pyenv_root }}"
+    PATH: "{{ pyenv_root }}/bin:{{ pyenv_root }}/shims:{{ ansible_env.PATH }}"
+  args:
+    executable: /bin/bash
+    chdir: "/home/{{ ansible_user }}"
+  become: yes
+
+
+- name: Install Poetry
+  shell: curl -sSL https://install.python-poetry.org | python3 -
+  environment:
+    PYENV_ROOT: "{{ pyenv_root }}"
+    PATH: "{{ pyenv_root }}/bin:{{ pyenv_root }}/shims:{{ ansible_env.PATH }}"
+
+- name: Add Poetry to PATH in .zshrc
+  lineinfile:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    line: 'export PATH="$HOME/.local/bin:$PATH"'
+    create: yes
+    state: present
+    insertafter: EOF
+
+- name: Reload shell for Poetry
+  shell: source /home/{{ ansible_user }}/.zshrc
+  args:
+    executable: /bin/zsh

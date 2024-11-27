@@ -1,0 +1,27 @@
+- name: Install ccache
+  pacman:
+    name: ccache
+    state: present
+  become: yes
+
+- name: Backup makepkg.conf
+  copy:
+    src: /etc/makepkg.conf
+    dest: "/etc/makepkg.conf.ansible_bk_makepkg_setup_{{ ansible_date_time.iso8601_basic }}"
+    remote_src: yes
+  become: yes
+
+- name: Ensure ccache is enabled in makepkg.conf
+  lineinfile:
+    path: /etc/makepkg.conf
+    regexp: '^BUILDENV=.*ccache.*$'
+    line: 'BUILDENV=(!distcc color ccache check !sign)'
+    backrefs: yes
+    state: present
+  become: yes
+
+- name: Deploy customized makepkg.conf using template
+  template:
+    src: files/makepkg.conf.j2
+    dest: /etc/makepkg.conf
+  become: yes

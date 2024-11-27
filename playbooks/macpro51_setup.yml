@@ -1,0 +1,40 @@
+---
+- name: Setup for Mac Pro 5.1
+  hosts: xvytis-macpro51
+  vars_files:
+    - ../group_vars/all.yml
+    - ../group_vars/vault.yml
+    - ../group_vars/manjaro.yml
+    - ../host_vars/xvytis-macpro51.yml
+  roles:
+    -  ../roles/common/ssh_key_upload
+    -  ../roles/manjaro/update_install_essentials
+    -  ../roles/macpro51/mbpfan_setup
+    -  ../roles/macpro51/refind_plus_setup
+    -  ../roles/manjaro/grub_setup
+    -  ../roles/manjaro/makepkg_setup
+    -  ../roles/manjaro/pyenv_setup
+    -  ../roles/manjaro/nvm_setup
+    -  ../roles/manjaro/graphics_driver_nonfree_setup
+    -  ../roles/macpro51/nvidia_setup
+    -  ../roles/macpro51/kde_plasma_setup
+    -  ../roles/manjaro/kvm_setup
+    -  ../roles/manjaro/mount_drives
+    -  ../roles/manjaro/vsftpd_setup
+    -  ../roles/manjaro/mpv_setup
+    -  ../roles/manjaro/grafana_prometheus_docker_setup
+    -  ../roles/manjaro/jellyfin_docker_setup
+    -  ../roles/manjaro/photoprism_docker_setup
+    -  ../roles/manjaro/mpd_setup
+    -  ../roles/manjaro/pacman_packages
+    -  ../roles/manjaro/yay_packages
+    -  ../roles/manjaro/vscodium_setup
+    -  ../roles/manjaro/obsidian_livesync
+    -  ../roles/manjaro/openproject_setup
+    
+    # -  ../roles/manjaro/conky_setup
+    # - ollama_noavx_docker_setup
+    # - open_webui_docker_setup
+    # - wine_setup
+    # - steam
+    # - gpu hardware passthrough

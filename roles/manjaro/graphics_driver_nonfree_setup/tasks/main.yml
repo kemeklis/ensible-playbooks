@@ -1,0 +1,6 @@
+- name: Uninstall video-linux driver if not in use
+  include_tasks: uninstall_video_linux.yml
+  when: uninstall_video_linux | default(true)
+
+- name: Install NVIDIA (non-free) driver
+  include_tasks: install_nvidia_nonfree.yml

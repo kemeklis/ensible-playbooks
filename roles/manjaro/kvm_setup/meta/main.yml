@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Vytenis
+  description: "Installs and configures KVM and Virt-Manager for virtualization on Manjaro Linux."
+  license: MIT
+  min_ansible_version: "2.9"
+dependencies: []

@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Vytenis
+  description: "Sets up pyenv for Python version management and installs Poetry on Manjaro Linux."
+  license: MIT
+  min_ansible_version: "2.9"
+dependencies: []

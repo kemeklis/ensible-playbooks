@@ -1,0 +1,41 @@
+- name: Install Docker
+  pacman:
+    name: docker
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Install Docker Compose
+  pacman:
+    name: docker-compose
+    state: present
+  become: yes
+
+- name: Enable and start Docker service
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Create Jellyfin directories for config and cache
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0777
+  loop:
+    - /home/{{ ansible_user }}/Docker
+    - /home/{{ ansible_user }}/Docker/jellyfin
+    - /home/{{ ansible_user }}/Docker/jellyfin/config
+    - /home/{{ ansible_user }}/Docker/jellyfin/cache
+
+- name: Copy Docker Compose file for Jellyfin
+  template:
+    src: files/docker-compose.yml.j2
+    dest: /home/{{ ansible_user }}/Docker/jellyfin/docker-compose.yml
+
+- name: Run Docker Compose to start Jellyfin
+  shell: docker-compose up -d
+  args:
+    chdir: "/home/{{ ansible_user }}/Docker/jellyfin"
+  become: yes

@@ -1,0 +1,6 @@
+# Display Configuration Variables
+kde_plasma:
+  display_output: "DP-2"
+  display_mode: "7680x2160"
+  display_rate: "119.97"
+  display_display: ":0"

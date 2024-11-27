@@ -1,0 +1,18 @@
+---
+# Set up a 64-bit Wine prefix
+
+- name: Create Wine prefix directory
+  file:
+    path: "{{ wine_prefix_path }}"
+    state: directory
+
+- name: Initialize 64-bit Wine prefix
+  shell: |
+    export WINEPREFIX="{{ wine_environment.WINEPREFIX }}"
+    export WINEARCH="{{ wine_environment.WINEARCH }}"
+    wineboot --init
+  environment:
+    WINEPREFIX: "{{ wine_environment.WINEPREFIX }}"
+    WINEARCH: "{{ wine_environment.WINEARCH }}"
+  args:
+    creates: "{{ wine_prefix_path }}/drive_c"

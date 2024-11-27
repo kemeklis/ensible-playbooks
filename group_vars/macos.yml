@@ -1,0 +1,5 @@
+# Variables specific to macOS systems
+package_manager: brew
+essential_packages:
+  - git
+  - htop

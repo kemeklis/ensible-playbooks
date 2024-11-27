@@ -1,0 +1,6 @@
+- name: Manjaro Setup
+  hosts: manjaro
+  roles:
+    - ../roles/common
+    - ../roles/manjaro
+    - { role: ../roles/macpro51, when: macpro51 }

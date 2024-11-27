@@ -1,0 +1,53 @@
+---
+# Tasks for PhotoPrism Docker setup
+
+- name: Install Docker
+  pacman:
+    name: docker
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Install Docker Compose
+  pacman:
+    name: docker-compose
+    state: present
+  become: yes
+
+- name: Enable and start Docker service
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Create directory for Docker and PhotoPrism
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0777
+  loop:
+    - /home/{{ ansible_user }}/Docker
+    - /home/{{ ansible_user }}/Docker/photoprism
+
+- name: Copy Docker Compose file for PhotoPrism
+  copy:
+    src: files/docker-compose.yml.j2
+    dest: /home/{{ ansible_user }}/Docker/photoprism/docker-compose.yml
+  become: yes
+
+- name: Run Docker Compose to start PhotoPrism
+  shell: docker-compose up -d
+  args:
+    chdir: /home/{{ ansible_user }}/Docker/photoprism
+  become: yes
+
+- name: Check Docker Compose service status
+  shell: docker-compose ps
+  args:
+    chdir: /home/{{ ansible_user }}/Docker/photoprism
+  register: docker_compose_status
+  become: yes
+
+- debug:
+    msg: "Docker Compose Status: {{ docker_compose_status.stdout }}"

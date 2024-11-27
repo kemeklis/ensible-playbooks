@@ -1,0 +1,20 @@
+Here’s a table with popular Obsidian plugins and links to their GitHub repositories:
+
+| Plugin                  | Description                                                                                       | GitHub URL                                                                                   |
+|-------------------------|---------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| LiveSync                | Self-hosted syncing solution for multiple devices                                                 | [LiveSync](https://github.com/vrtmrz/obsidian-livesync)                                      |
+| Tasks                   | Enhanced task management with due dates, priority, recurrence, and filtering                      | [Tasks](https://github.com/obsidian-tasks-group/obsidian-tasks)                              |
+| Advanced Tables         | Easily create and manage markdown tables                                                          | [Advanced Tables](https://github.com/tgrosinger/obsidian-advanced-tables)                    |
+| Linter                  | Automatic linting for formatting and standardizing notes                                          | [Linter](https://github.com/platers/obsidian-linter)                                        |
+| Smart Connections       | Suggests connections between notes based on content, tags, and links                              | [Smart Connections](https://github.com/argenos/nldates-obsidian)                             |
+| Calendar                | Adds a calendar view to the vault, ideal for daily notes                                          | [Calendar](https://github.com/liamcain/obsidian-calendar-plugin)                             |
+| Charts                  | Enables embedding visual charts and graphs                                                        | [Charts](https://github.com/obsidian-tasks-group/obsidian-charts)                            |
+| Dataview                | Create tables, lists, or views of notes based on metadata                                         | [Dataview](https://github.com/blacksmithgu/obsidian-dataview)                                |
+| QuickAdd                | Macro-like functionality for quick inserts, templates, and commands                               | [QuickAdd](https://github.com/chhoumann/quickadd)                                           |
+| Templater               | Advanced templating for structured note consistency                                               | [Templater](https://github.com/SilentVoid13/Templater)                                      |
+| Outliner                | Transforms lists into collapsible outlines                                                        | [Outliner](https://github.com/vslinko/obsidian-outliner)                                    |
+| Kanban                  | Organizes notes in a Kanban-style board, useful for project management                            | [Kanban](https://github.com/mgmeyers/obsidian-kanban)                                       |
+| Day Planner             | Schedule and track daily tasks with a timeline                                                    | [Day Planner](https://github.com/lynchjames/obsidian-day-planner)                           |
+| Mind Map                | Converts notes or lists into mind maps                                                            | [Mind Map](https://github.com/lynchjames/obsidian-mind-map)                                 |
+| Natural Language Dates  | Allows adding dates in natural language format, e.g., "next Tuesday"                              | [Natural Language Dates](https://github.com/argenos/nldates-obsidian)                       |
+| Obsidian Git            | Automatically commits and pushes changes to a Git repository, ideal for version control           | [Obsidian Git](https://github.com/denolehov/obsidian-git)

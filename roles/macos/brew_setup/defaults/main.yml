@@ -1,0 +1,5 @@
+---
+# Default variables for nvm_setup role
+
+nvm_version: "v0.39.5"  # Specify the desired nvm version
+node_version: "lts/*"   # Install the latest LTS version

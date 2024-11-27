@@ -1,0 +1,6 @@
+---
+# Default variables for pyenv_setup role
+
+pyenv_root: "/home/{{ ansible_user }}/.pyenv"
+python_version: "latest"  # Placeholder to install the latest Python version
+poetry_version: "latest"

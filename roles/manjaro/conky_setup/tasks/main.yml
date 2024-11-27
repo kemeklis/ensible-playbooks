@@ -1,0 +1,44 @@
+- name: Install Conky
+  ansible.builtin.pacman:
+    name: conky
+    state: present
+
+- name: Find temporary xauth file
+  become: true
+  shell: find /tmp -name 'xauth_*' -print -quit
+  register: xauth_file
+  changed_when: xauth_file.stdout != ''
+  become: yes
+
+- name: Debug the found xauth file
+  debug:
+    msg: "Found xauth file: {{ xauth_file.stdout }}"
+
+- name: Merge temporary xauth file into .Xauthority
+  shell: xauth merge {{ xauth_file.stdout }}
+  when: xauth_file.stdout != ''
+
+- name: Create Conky configuration directory
+  ansible.builtin.file:
+    path: '/home/{{ ansible_user }}/.conky'
+    state: directory
+    mode: '0755'
+
+- name: Upload Conky configuration file
+  ansible.builtin.copy:
+    src: files/conky.conf
+    dest: '/home/{{ ansible_user }}/.conky/conky.conf'
+    mode: '0644'
+
+- name: Create autostart script for Conky
+  ansible.builtin.copy:
+    dest: '/home/{{ ansible_user }}/.config/autostart/conky.desktop'
+    content: |
+      [Desktop Entry]
+      Type=Application
+      Exec=conky -c /home/{{ ansible_user }}/.conky/conky.conf
+      Hidden=false
+      NoDisplay=false
+      X-GNOME-Autostart-enabled=true
+      Name=Conky
+    mode: '0644'
