@@ -1,0 +1,28 @@
+# List of generic packages to be installed
+generic_packages:
+  - obsidian
+  - dbeaver
+  - blender
+  - freecad
+  - docker
+  - docker-compose
+  - ranger
+  - thunderbird
+  - gimp
+  - ranger
+  - ncmpcpp
+  - brave-browser
+  - neovim
+  - tree
+  - xclip
+  - btop
+  - deluge-gtk
+
+# List of generic packages to be installed using yay
+yay_packages:
+  - github-desktop-bin
+  - insomnia-bin
+  - orca-slicer-bin
+  - clementine
+  - yt-dlp
+  - yt-dlp-gui

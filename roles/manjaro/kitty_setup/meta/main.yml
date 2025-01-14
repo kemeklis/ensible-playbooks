@@ -1,0 +1,7 @@
+# roles/manjaro/kitty_setup/meta/main.yml
+galaxy_info:
+  author: "Vytenis"
+  description: "Installs and configures Kitty terminal, Zsh, Tmux on Manjaro Linux."
+  license: "MIT"
+  min_ansible_version: "2.9"
+dependencies: []
