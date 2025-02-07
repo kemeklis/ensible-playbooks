@@ -1,5 +1,5 @@
 ---
-# roles/kvm_setup/tasks/install_kvm.yml
+# roles/manjaro/kvm_setup/tasks/main.yml
 
 - name: Ensure pacman is up to date
   pacman:
@@ -7,7 +7,7 @@
     upgrade: yes
   become: yes
 
-- name: Install KVM and Virt-Manager packages
+- name: Install KVM, Virt-Manager, and SPICE packages
   pacman:
     name:
       - qemu-full
@@ -18,6 +18,10 @@
       - bridge-utils
       - openbsd-netcat
       - ebtables
+      - spice
+      - spice-gtk
+      - spice-protocol
+      - spice-server
     state: present
     update_cache: yes
     force: yes
@@ -95,4 +99,45 @@
   notify:
     - Regenerate Initramfs
     - Reboot System
+  become: yes
+
+- name: Autostart default libvirt network
+  become: yes
+  command: virsh net-autostart default
+  register: autostart_result
+  failed_when: autostart_result.rc not in [0,1]
+
+- name: Start default libvirt network
+  become: yes
+  command: virsh net-start default
+  register: start_result
+  failed_when: start_result.rc not in [0,1]
+
+- name: Install iptables if not present
+  pacman:
+    name: iptables
+    state: present
+  become: yes
+
+- name: Accept incoming traffic on virbr0
+  become: yes
+  command: iptables -I INPUT -i virbr0 -j ACCEPT
+
+- name: Forward outgoing traffic on virbr0
+  become: yes
+  command: iptables -I FORWARD -o virbr0 -j ACCEPT
+
+- name: Forward incoming traffic on virbr0
+  become: yes
+  command: iptables -I FORWARD -i virbr0 -j ACCEPT
+
+- name: Save iptables rules
+  become: yes
+  command: iptables-save > /etc/iptables/iptables.rules
+
+- name: Enable and start iptables service
+  systemd:
+    name: iptables.service
+    enabled: yes
+    state: started
   become: yes
