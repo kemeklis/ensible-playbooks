@@ -16,7 +16,7 @@
     -  ../roles/manjaro/pyenv_setup
     -  ../roles/manjaro/nvm_setup
     -  ../roles/manjaro/graphics_driver_nonfree_setup
-    -  ../roles/macpro51/nvidia_setup
+    -  ../roles/manjaro/nvidia_setup
     -  ../roles/macpro51/kde_plasma_setup
     -  ../roles/manjaro/kvm_setup
     -  ../roles/manjaro/mount_drives
@@ -30,7 +30,6 @@
     -  ../roles/manjaro/yay_packages
     -  ../roles/manjaro/vscodium_setup
     -  ../roles/manjaro/obsidian_livesync
-    -  ../roles/manjaro/openproject_setup
     
     # -  ../roles/manjaro/conky_setup
     # - ollama_noavx_docker_setup

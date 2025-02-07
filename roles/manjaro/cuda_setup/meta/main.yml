@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: "Your Name"
+  description: "Installs CUDA and cuDNN on Manjaro/Arch systems."
+  company: "Your Company"
+  license: "MIT"
+  min_ansible_version: 2.9
+  platforms:
+    - name: Archlinux
+      versions:
+        - any
+  categories:
+    - system
+
+dependencies: []

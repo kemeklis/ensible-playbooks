@@ -8,11 +8,10 @@
     - ../host_vars/xvytis-sys741getnrt.yml
   roles:
     # -  ../roles/manjaro/update_install_essentials
-    # # -  ../roles/manjaro/grub_setup
+    # -  ../roles/manjaro/grub_setup
     # -  ../roles/manjaro/makepkg_setup
     # -  ../roles/manjaro/pyenv_setup
     # -  ../roles/manjaro/nvm_setup
-    # # -  ../roles/manjaro/kvm_setup
     # -  ../roles/manjaro/vsftpd_setup
     # -  ../roles/manjaro/mpv_setup
     # -  ../roles/manjaro/pacman_packages
@@ -20,4 +19,10 @@
     # # -  ../roles/manjaro/vscodium_setup
     # -  ../roles/manjaro/gpg_setup
     # - ../roles/manjaro/node_exporter_docker_setup
-    - ../roles/manjaro/kitty_setup
+    # - ../roles/manjaro/kitty_setup
+    # - ../roles/manjaro/graphics_driver_nonfree_setup
+    # - ../roles/manjaro/nvidia_setup
+    # - ../roles/manjaro/cuda_setup
+    # - ../roles/manjaro/obsidian_livesync
+    # - ../roles/manjaro/mpv_setup
+    -  ../roles/manjaro/kvm_setup

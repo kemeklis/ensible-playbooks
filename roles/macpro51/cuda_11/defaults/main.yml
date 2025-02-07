@@ -1,0 +1,9 @@
+# roles/refind_plus_setup/defaults/main.yml
+mpv_setup:
+  media_types:
+    video: "video/mp4 video/x-matroska video/ogg video/webm video/avi video/x-msvideo"
+    audio: "audio/mpeg audio/ogg audio/wav audio/x-wav audio/x-m4a"
+    other: "application/ogg application/x-matroska application/x-flac"
+  packages:
+    - mpv
+  remove_vlc: true   # Set this to false if you want to keep VLC installed

@@ -1,12 +1,12 @@
 ---
 # Install NVIDIA drivers and related packages
 
-- name: Install yay using pacman
-  pacman:
-    name: yay
-    state: present
-    update_cache: yes
-  become: yes
+# - name: Install yay using pacman
+#   pacman:
+#     name: yay
+#     state: present
+#     update_cache: yes
+#   become: yes
 
 - name: Install NVIDIA drivers and related packages
   pacman:
@@ -14,7 +14,6 @@
       - nvidia
       - nvidia-settings
       - nvidia-utils
-      - nvidia-smi
       - lib32-nvidia-utils
       - libglvnd
       - mesa

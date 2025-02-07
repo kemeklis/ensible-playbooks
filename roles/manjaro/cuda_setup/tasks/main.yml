@@ -1,0 +1,21 @@
+---
+# roles/cuda_install/tasks/main.yml
+# Main tasks file for CUDA + cuDNN installation
+
+- name: Update package cache (pacman)
+  pacman:
+    update_cache: yes
+  become: yes
+
+- name: Install CUDA
+  pacman:
+    name: "{{ cuda_package_name }}"
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Install cuDNN
+  pacman:
+    name: "{{ cudnn_package_name }}"
+    state: present
+  become: yes

@@ -1,0 +1,5 @@
+---
+# roles/cuda_install/defaults/main.yml
+
+cuda_package_name: "cuda"
+cudnn_package_name: "cudnn"

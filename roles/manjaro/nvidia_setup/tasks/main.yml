@@ -6,7 +6,6 @@
 - include_tasks: configure_mkinitcpio.yml
 - include_tasks: configure_grub.yml
 - include_tasks: regenerate_grub.yml
-- include_tasks: install_cudnn8_cuda11.yml
 
 # Ensure the system always restarts after driver installation
 - name: Trigger system reboot after NVIDIA setup

@@ -1,0 +1,55 @@
+# roles/refind_plus_setup/tasks/main.yml
+---
+- name: Install mpv
+  pacman:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ mpv_setup.packages }}"
+  become: yes
+
+# - name: Optional - Remove VLC (if installed and requested)
+#   pacman:
+#     name: vlc
+#     state: absent
+#   when: mpv_setup.remove_vlc
+#   become: yes
+
+- name: Set mpv as the default media player for video files
+  command: xdg-mime default mpv.desktop {{ mpv_setup.media_types.video }}
+  become_user: "{{ ansible_user }}"
+  environment:
+    DISPLAY: ":0"
+  ignore_errors: yes
+
+- name: Set mpv as the default media player for audio files
+  command: xdg-mime default mpv.desktop {{ mpv_setup.media_types.audio }}
+  become_user: "{{ ansible_user }}"
+  environment:
+    DISPLAY: ":0"
+  ignore_errors: yes
+
+- name: Set mpv as the default media player for other media types (optional)
+  command: xdg-mime default mpv.desktop {{ mpv_setup.media_types.other }}
+  become_user: "{{ ansible_user }}"
+  environment:
+    DISPLAY: ":0"
+  ignore_errors: yes
+
+- name: Verify default application for video files is mpv
+  command: xdg-mime query default video/mp4
+  register: result_video_default
+  become_user: "{{ ansible_user }}"
+
+- name: Debug output for video default
+  debug:
+    msg: "Default media player for video/mp4 is: {{ result_video_default.stdout }}"
+
+- name: Verify default application for audio files is mpv
+  command: xdg-mime query default audio/mpeg
+  register: result_audio_default
+  become_user: "{{ ansible_user }}"
+
+- name: Debug output for audio default
+  debug:
+    msg: "Default media player for audio/mpeg is: {{ result_audio_default.stdout }}"
