@@ -1,0 +1,25 @@
+# roles/manjaro/kitty_setup/templates/tmux.conf.j2
+
+# Enable mouse support
+set -g mouse on
+
+# Use vim keybindings in copy mode
+setw -g mode-keys vi
+
+# Easier selection & copy
+bind-key -T copy-mode-vi v send -X begin-selection
+bind-key -T copy-mode-vi y send -X copy-selection-and-cancel
+bind p paste-buffer
+
+# Reload tmux config with prefix + r
+bind r source-file ~/.tmux.conf
+
+# (Optional) set prefix to Ctrl-a:
+# set -g prefix C-a
+# unbind C-b
+# bind C-a send-prefix
+
+# A simple status bar style
+set -g status-bg colour234
+set -g status-fg colour136
+set -g status-left '#[fg=green][#H] #[default]'

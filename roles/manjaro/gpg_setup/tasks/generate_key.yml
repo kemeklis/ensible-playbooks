@@ -1,0 +1,14 @@
+- name: Create batch file for GPG key generation
+  template:
+    src: files/gpg_key_batchfile.j2
+    dest: "/home/{{ ansible_user }}/.gnupg/gpg_key_batchfile"
+    owner: "{{ ansible_user }}"
+    mode: '0600'
+
+- name: Generate GPG key in batch mode
+  command: "gpg --batch --generate-key /home/{{ ansible_user }}/.gnupg/gpg_key_batchfile"
+
+- name: Remove GPG batch file
+  file:
+    path: "/home/{{ ansible_user }}/.gnupg/gpg_key_batchfile"
+    state: absent

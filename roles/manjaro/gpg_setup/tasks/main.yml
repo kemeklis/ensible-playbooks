@@ -1,0 +1,28 @@
+---
+# roles/manjaro/gpg_setup/tasks/main.yml
+
+- name: Install GnuPG
+  pacman:
+    name: gnupg
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Create ~/.gnupg directory with secure permissions
+  file:
+    path: "/home/{{ ansible_user }}/.gnupg"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: '0700'
+
+- name: Check if user already has a GPG key for {{ gpg_key_email }}
+  command: gpg --list-keys "{{ gpg_key_email }}"
+  register: gpg_key_list
+  changed_when: false
+  failed_when: false
+
+- name: Include key generation tasks if we want to generate a key and if not found
+  include_tasks: generate_key.yml
+  when:
+    - gpg_generate_key
+    - gpg_key_list.stdout.find('pub') == -1

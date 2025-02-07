@@ -1,0 +1,29 @@
+---
+# Install NVIDIA drivers and related packages
+
+# - name: Install yay using pacman
+#   pacman:
+#     name: yay
+#     state: present
+#     update_cache: yes
+#   become: yes
+
+- name: Install NVIDIA drivers and related packages
+  pacman:
+    name:
+      - nvidia
+      - nvidia-settings
+      - nvidia-utils
+      - lib32-nvidia-utils
+      - libglvnd
+      - mesa
+      - lib32-mesa
+      - nvidia-container-toolkit
+      - libnvidia-container
+      - nvtop
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Install nvidia-docker-compose package
+  command: "yay -S --noconfirm nvidia-docker-compose"

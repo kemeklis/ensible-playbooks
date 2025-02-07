@@ -1,8 +1,0 @@
----
-# Handlers for restarting Docker service
-
-- name: Restart Docker
-  systemd:
-    name: docker
-    state: restarted
-  become: yes

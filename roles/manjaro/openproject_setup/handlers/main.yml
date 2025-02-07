@@ -1,5 +1,0 @@
-- name: Restart OpenProject Container
-  ansible.builtin.shell: docker-compose restart
-  args:
-    chdir: /home/{{ ansible_user }}/Docker/openproject
-  become: yes

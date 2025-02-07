@@ -1,0 +1,20 @@
+# roles/manjaro/kitty_setup/defaults/main.yml
+---
+# Default variables for kitty_setup role
+kitty_setup_install_oh_my_zsh: true
+kitty_setup_zsh_theme: "agnoster"
+
+# Whether to install oh-my-zsh for extended theming/plugins
+kitty_setup_install_oh_my_zsh: true
+
+# Where oh-my-zsh will be installed
+kitty_setup_oh_my_zsh_dir: "/home/{{ ansible_user }}/.oh-my-zsh"
+
+# The oh-my-zsh theme name
+kitty_setup_zsh_theme: "robbyrussell"
+
+# Location of kitty config
+kitty_config_path: "/home/{{ ansible_user }}/.config/kitty/kitty.conf"
+
+# Location of tmux config
+tmux_config_path: "/home/{{ ansible_user }}/.tmux.conf"

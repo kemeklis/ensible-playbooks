@@ -1,0 +1,11 @@
+# roles/manjaro/node_exporter_docker_setup/handlers/main.yml
+---
+# Handlers for Node Exporter Docker
+
+- name: Restart Node Exporter
+  shell: |
+    docker-compose down
+    docker-compose up -d
+  args:
+    chdir: /home/{{ ansible_user }}/Docker/node-exporter
+  become: yes

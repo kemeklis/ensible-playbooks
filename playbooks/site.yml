@@ -4,6 +4,9 @@
 - import_playbook: lenovo_t430_setup.yml
   when: "'xvytis-lenovo_t430' in inventory_hostname"
 
+- import_playbook: sys741getnrt_setup.yml
+  when: "'xvytis-sys741getnrt' in inventory_hostname"
+
 # - import_playbook: manjaro_setup.yml
 #   when: "'manjaro' in group_names"
 

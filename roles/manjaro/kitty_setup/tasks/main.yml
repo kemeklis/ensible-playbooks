@@ -1,0 +1,80 @@
+# roles/manjaro/kitty_setup/tasks/main.yml
+---
+# Main tasks to install and configure kitty, zsh, tmux on Manjaro
+
+- name: Ensure kitty, zsh, and tmux are installed
+  pacman:
+    name:
+      - kitty
+      - zsh
+      - tmux
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Set zsh as default login shell
+  user:
+    name: "{{ ansible_user }}"
+    shell: /bin/zsh
+  become: yes
+
+- name: Create kitty config directory
+  file:
+    path: "/home/{{ ansible_user }}/.config/kitty"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+  become: yes
+
+- name: Copy kitty configuration template
+  template:
+    src: "files/kitty.conf.j2"
+    dest: "{{ kitty_config_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+  become: yes
+
+- name: Copy tmux configuration template
+  template:
+    src: "files/tmux.conf.j2"
+    dest: "{{ tmux_config_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+  become: yes
+
+- name: Auto-start tmux in zsh if not already in tmux
+  lineinfile:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    regexp: "^\\s*if \\[ -z \\$TMUX \\]"
+    line: |
+      if [ -z "$TMUX" ]; then
+        tmux
+      fi
+    insertafter: EOF
+  become: yes
+  become_user: "{{ ansible_user }}"
+
+- name: Install Oh My Zsh (unattended) if desired
+  shell: |
+    if [ ! -d "{{ kitty_setup_oh_my_zsh_dir }}" ]; then
+      RUNZSH=no CHSH=no bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    fi
+  args:
+    executable: /bin/zsh
+    chdir: "/home/{{ ansible_user }}"
+  become: yes
+  become_user: "{{ ansible_user }}"
+  when: kitty_setup_install_oh_my_zsh
+
+- name: Configure oh-my-zsh theme
+  lineinfile:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    regexp: '^ZSH_THEME='
+    line: "ZSH_THEME=\"{{ kitty_setup_zsh_theme }}\""
+    create: yes
+  become: yes
+  become_user: "{{ ansible_user }}"
+  when: kitty_setup_install_oh_my_zsh

@@ -1,0 +1,24 @@
+# roles/manjaro/kitty_setup/templates/kitty.conf.j2
+
+# Launch Zsh as the default shell inside kitty
+shell /bin/zsh
+
+# Example font settings
+font_family FiraCode Nerd Font
+font_size 12.0
+
+# Basic color scheme (OneDark example)
+background #282C34
+foreground #ABB2BF
+
+# Scrollback lines
+scrollback_lines 10000
+
+# Copy/paste with Ctrl+Shift+C / Ctrl+Shift+V
+map ctrl+shift+c copy_to_clipboard
+map ctrl+shift+v paste_from_clipboard
+
+# Select to copy
+select_to_copy true
+
+# Additional kitty configuration as needed...

@@ -1,0 +1,45 @@
+# roles/manjaro/node_exporter_docker_setup/tasks/main.yml
+---
+- name: Install Docker
+  pacman:
+    name: docker
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Install Docker Compose
+  pacman:
+    name: docker-compose
+    state: present
+  become: yes
+
+- name: Enable and start Docker service
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Create directory for Node Exporter Docker
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /home/{{ ansible_user }}/Docker
+    - /home/{{ ansible_user }}/Docker/node-exporter
+  become: yes
+
+- name: Copy docker-compose.yml for Node Exporter
+  copy:
+    src: docker-compose.yml
+    dest: /home/{{ ansible_user }}/Docker/node-exporter/docker-compose.yml
+    mode: '0644'
+  become: yes
+
+- name: Run Node Exporter with Docker Compose
+  shell: docker-compose up -d
+  args:
+    chdir: /home/{{ ansible_user }}/Docker/node-exporter
+  become: yes
+  notify: Restart Node Exporter
